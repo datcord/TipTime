@@ -1,3 +1,3 @@
 ##Simple android app to help you calculate the tip$$ you want to give!!
 
-![image](https://github.com/user-attachments/assets/fb121bc2-d2e3-4919-9c30-b2cf01c8f7eb)
+![Screenshot_20250121_015558](https://github.com/user-attachments/assets/7daa2a4b-7a44-42db-8fe3-62d9f663a685)

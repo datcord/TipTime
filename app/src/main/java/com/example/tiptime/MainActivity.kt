@@ -28,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.example.tiptime.ui.theme.TipTimeTheme
 import java.security.KeyStore.TrustedCertificateEntry
 import java.text.NumberFormat
+import java.util.Currency
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,9 +66,10 @@ fun TipTimeLayout() {
     var amountInput by remember { mutableStateOf("") }
     var tipInput by remember { mutableStateOf(" ") }
     var roundUp by remember { mutableStateOf(false) }
+    var isEuro by remember { mutableStateOf(false) }
     val amount = amountInput.toDoubleOrNull() ?: 0.0
     val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount,tipPercent, roundUp)
+    val tip = calculateTip(amount, tipPercent, roundUp, isEuro)
 
     Column(
         modifier = Modifier
@@ -118,6 +121,12 @@ fun TipTimeLayout() {
             text = stringResource(R.string.tip_amount, tip),
             style = MaterialTheme.typography.displaySmall
         )
+        Button(
+            onClick = { isEuro = !isEuro },
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            Text(text = if (isEuro) "Switch to Pounds" else "Switch to Euros")
+        }
         Spacer(modifier = Modifier.height(150.dp))
     }
 }
@@ -166,14 +175,19 @@ fun RoundTheTipRow(
 internal fun calculateTip(
     amount: Double,
     tipPercent: Double = 15.0,
-    roundUp: Boolean
+    roundUp: Boolean,
+    isEuro: Boolean
 ): String {
     var tip = tipPercent / 100 * amount
     if (roundUp) {
         tip = kotlin.math.ceil(tip)
     }
-    return NumberFormat.getCurrencyInstance().format(tip)
-
+    val currencyFormat = if (isEuro) {
+        NumberFormat.getCurrencyInstance().apply { currency = Currency.getInstance("EUR") }
+    } else {
+        NumberFormat.getCurrencyInstance().apply { currency = Currency.getInstance("GBP") }
+    }
+    return currencyFormat.format(tip)
 }
 
 @Preview(showBackground = true)
